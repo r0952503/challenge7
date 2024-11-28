@@ -7,21 +7,19 @@
     <title>3D Sneaker App</title>
   </head>
   <body>
-    <div id="sidebar">
-      <h3>Select Part</h3>
-      <ul id="part-list">
-        <li data-part="outside_1">Front <span class="color-indicator"></span></li>
-        <li data-part="outside_2">Back<span class="color-indicator"></span></li>
-        <li data-part="outside_3">Front 2<span class="color-indicator"></span></li>
-        <li data-part="sole_top">Sole Top<span class="color-indicator"></span></li>
-        <li data-part="meshes4_1">Sole bottom<span class="color-indicator"></span></li>
-        <li data-part="inside">Inside<span class="color-indicator"></span></li>
-        <li data-part="laces">Laces<span class="color-indicator"></span></li>
-      </ul>
-      <h3>Select Color</h3>
-      <label for="color-picker"></label>
-      <input type="color" id="color-picker">
-    </div>
+    <div id="info-panel">
+      <h3 id="selected-part-name">No part selected</h3>
+      <div id="config-options" style="display: none;">
+        <label for="color-picker">Color:</label>
+        <input type="color" id="color-picker">
+        <label for="texture-picker">Texture:</label>
+        <select id="texture-picker">
+          <option value="none">None</option>
+          <option value="leather">Leather</option>
+          <option value="rubber">Rubber</option>
+          <option value="denim">Denim</option>
+        </select>
+      </div>
     <script type="module" src="/main.js"></script>
   </body>
 </html>
