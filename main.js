@@ -142,6 +142,28 @@ gltfLoader.load(
       }
     });
 
+    document.getElementById('color-picker').addEventListener('input', (event) => {
+      if (selectedPart && !selectedPart.material.map) { // Alleen als er geen afbeelding is
+        const color = event.target.value;
+        selectedPart.material.color.set(color); // Stel de kleur in
+        selectedPart.material.needsUpdate = true;
+      }
+    });
+
+    document.getElementById('texture-picker').addEventListener('change', (event) => {
+      if (selectedPart && !selectedPart.material.map) { // Alleen als er geen afbeelding is
+        const textureKey = event.target.value;
+    
+        if (textureKey === 'none') {
+          selectedPart.material.map = null; // Verwijder textuur
+        } else {
+          selectedPart.material.map = textures[textureKey]; // Stel textuur in
+        }
+    
+        selectedPart.material.needsUpdate = true;
+      }
+    });
+
     // Texture picker to change part texture
     document.getElementById('texture-picker').addEventListener('change', (event) => {
       if (selectedPart) {
@@ -165,10 +187,16 @@ gltfLoader.load(
           const reader = new FileReader();
           reader.onload = (e) => {
             const uploadedTexture = new THREE.TextureLoader().load(e.target.result);
-
+    
             // Toepassen van de afbeelding als textuur
-            selectedPart.material.map = uploadedTexture;
-            selectedPart.material.needsUpdate = true; // Renderer waarschuwen
+            selectedPart.material.map = uploadedTexture; // Stel de afbeelding in als texture
+            selectedPart.material.color.set('#ffffff'); // Reset de kleur naar wit om image te behouden
+            selectedPart.material.map.needsUpdate = true; // Renderer waarschuwen
+            selectedPart.material.needsUpdate = true;
+    
+            // Verwijder eventuele bestaande texturen
+            selectedPart.material.clearcoatRoughnessMap = null;
+            selectedPart.material.roughnessMap = null;
           };
           reader.readAsDataURL(file);
         }
