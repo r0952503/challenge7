@@ -73,34 +73,41 @@ gltfLoader.load(
 
     scene.add(model);
 
+    // Reset texture option
     function resetTextureOption() {
       document.getElementById('texture-picker').value = 'none'; // Reset textuur naar "none"
     }
 
-   // Mouse move to hover
-window.addEventListener('mousemove', (event) => {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(model.children);
-
-  if (intersects.length > 0) {
-    if (hoveredPart !== intersects[0].object) {
-      resetTextureOption(); // Reset alleen de textuur naar "none"
-      if (hoveredPart && hoveredPart !== selectedPart) {
-        hoveredPart.material.emissive.setHex(0x000000); // Reset hover
-      }
-      hoveredPart = intersects[0].object;
-      if (hoveredPart !== selectedPart) {
-        hoveredPart.material.emissive.setHex(0x555555); // Highlight hover
-      }
+    // Reset image upload option
+    function resetImageUploadOption() {
+      const imagePicker = document.getElementById('image-picker');
+      imagePicker.value = ''; // Reset bestand naar standaard (geen geselecteerd bestand)
     }
-  } else if (hoveredPart && hoveredPart !== selectedPart) {
-    hoveredPart.material.emissive.setHex(0x000000); // Reset hover
-    hoveredPart = null;
-  }
-});
+
+    // Mouse move to hover
+    window.addEventListener('mousemove', (event) => {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(model.children);
+
+      if (intersects.length > 0) {
+        if (hoveredPart !== intersects[0].object) {
+          resetTextureOption(); // Reset alleen de textuur naar "none"
+          if (hoveredPart && hoveredPart !== selectedPart) {
+            hoveredPart.material.emissive.setHex(0x000000); // Reset hover
+          }
+          hoveredPart = intersects[0].object;
+          if (hoveredPart !== selectedPart) {
+            hoveredPart.material.emissive.setHex(0x555555); // Highlight hover
+          }
+        }
+      } else if (hoveredPart && hoveredPart !== selectedPart) {
+        hoveredPart.material.emissive.setHex(0x000000); // Reset hover
+        hoveredPart = null;
+      }
+    });
 
     // Mouse click to select part
     window.addEventListener('click', () => {
@@ -111,10 +118,17 @@ window.addEventListener('mousemove', (event) => {
         selectedPart = hoveredPart;
         selectedPart.material.emissive.setHex(0x999999); // Highlight selected part
 
+        // Reset texture and image upload options
+        resetTextureOption(); // Reset textuur naar "none"
+        resetImageUploadOption(); // Reset afbeelding-upload naar "No file chosen"
+
         // Update UI with selected part name
         const partName = selectedPart.name || "Unnamed part";
         document.getElementById('selected-part-name').textContent = partName;
         document.getElementById('config-options').style.display = 'block';
+
+        // Toon afbeelding uploadopties
+        document.getElementById('image-upload').style.display = 'block';
       }
     });
 
@@ -143,9 +157,24 @@ window.addEventListener('mousemove', (event) => {
       }
     });
 
-    // Prevent color picker from deselecting the part
-    document.getElementById('color-picker').addEventListener('click', (event) => {
-      event.stopPropagation();
+    // Image picker to upload and apply an image as texture
+    document.getElementById('image-picker').addEventListener('change', (event) => {
+      if (selectedPart) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const uploadedTexture = new THREE.TextureLoader().load(e.target.result);
+
+            // Toepassen van de afbeelding als textuur
+            selectedPart.material.map = uploadedTexture;
+            selectedPart.material.needsUpdate = true; // Renderer waarschuwen
+          };
+          reader.readAsDataURL(file);
+        }
+      } else {
+        alert('Please select a part of the shoe first.');
+      }
     });
   },
   undefined,
