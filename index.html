@@ -24,7 +24,15 @@
             <input type="file" id="image-picker" accept="image/*">
           </div>
         </div>
-        <button id="place-order">Place Order</button>
+        <button id="place-order" class="active">Place Order</button>
+      </div>
+
+      <div id="order-feedback" style="display: none;">
+        <div class="feedback-content">
+          <h2>Order Placed!</h2>
+          <p>Your custom shoe has been successfully ordered.</p>
+          <button id="close-feedback">Close</button>
+        </div>
       </div>
 
     <script type="module" src="/main.js"></script>

@@ -84,49 +84,63 @@ gltfLoader.load(
       imagePicker.value = ''; // Reset bestand naar standaard (geen geselecteerd bestand)
     }
 
-    // Mouse move to hover
     window.addEventListener('mousemove', (event) => {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
+    
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(model.children);
-
+    
       if (intersects.length > 0) {
         if (hoveredPart !== intersects[0].object) {
           resetTextureOption(); // Reset alleen de textuur naar "none"
           if (hoveredPart && hoveredPart !== selectedPart) {
-            hoveredPart.material.emissive.setHex(0x000000); // Reset hover
+            // Controleer of `emissive` bestaat voordat je het probeert te resetten
+            if (hoveredPart.material && hoveredPart.material.emissive) {
+              hoveredPart.material.emissive.setHex(0x000000); // Reset hover
+            }
           }
           hoveredPart = intersects[0].object;
           if (hoveredPart !== selectedPart) {
-            hoveredPart.material.emissive.setHex(0x555555); // Highlight hover
+            // Controleer of `emissive` bestaat voordat je het probeert in te stellen
+            if (hoveredPart.material && hoveredPart.material.emissive) {
+              hoveredPart.material.emissive.setHex(0x555555); // Highlight hover
+            }
           }
         }
       } else if (hoveredPart && hoveredPart !== selectedPart) {
-        hoveredPart.material.emissive.setHex(0x000000); // Reset hover
+        // Controleer of `emissive` bestaat voordat je het probeert te resetten
+        if (hoveredPart.material && hoveredPart.material.emissive) {
+          hoveredPart.material.emissive.setHex(0x000000); // Reset hover
+        }
         hoveredPart = null;
       }
     });
-
-    // Mouse click to select part
     window.addEventListener('click', () => {
       if (hoveredPart) {
         if (selectedPart) {
-          selectedPart.material.emissive.setHex(0x000000); // Reset previous selection
+          // Controleer of `emissive` bestaat voordat je het probeert te resetten
+          if (selectedPart.material && selectedPart.material.emissive) {
+            selectedPart.material.emissive.setHex(0x000000); // Reset previous selection
+          }
         }
+    
         selectedPart = hoveredPart;
-        selectedPart.material.emissive.setHex(0x999999); // Highlight selected part
-
+    
+        // Controleer of `emissive` bestaat voordat je het probeert in te stellen
+        if (selectedPart.material && selectedPart.material.emissive) {
+          selectedPart.material.emissive.setHex(0x999999); // Highlight selected part
+        }
+    
         // Reset texture and image upload options
         resetTextureOption(); // Reset textuur naar "none"
         resetImageUploadOption(); // Reset afbeelding-upload naar "No file chosen"
-
+    
         // Update UI with selected part name
         const partName = selectedPart.name || "Unnamed part";
         document.getElementById('selected-part-name').textContent = partName;
         document.getElementById('config-options').style.display = 'block';
-
+    
         // Toon afbeelding uploadopties
         document.getElementById('image-upload').style.display = 'block';
       }
@@ -212,10 +226,44 @@ gltfLoader.load(
 );
 
 const placeOrderButton = document.getElementById('place-order');
+const orderFeedback = document.getElementById('order-feedback');
+const closeFeedbackButton = document.getElementById('close-feedback');
+
+// Eventlistener voor het plaatsen van een bestelling
 placeOrderButton.addEventListener('click', () => {
-  alert('Your custom shoe has been successfully ordered!');
+  orderFeedback.style.display = 'block'; // Toon het feedbackvenster
 });
 
+// Eventlistener voor het sluiten van het feedbackvenster
+closeFeedbackButton.addEventListener('click', () => {
+  orderFeedback.style.display = 'none'; // Verberg het feedbackvenster
+  resetPage(); // Reset de configuratie
+});
+
+// Functie om de configuratie te resetten
+function resetPage() {
+  // Reset het 3D-model
+  model.traverse((child) => {
+    if (child.isMesh) {
+      child.material.map = null; // Verwijder texturen
+      child.material.color.set('#ffffff'); // Reset naar standaardkleur (wit)
+      child.material.needsUpdate = true;
+    }
+  });
+
+  // Reset de UI
+  document.getElementById('selected-part-name').textContent = 'No part selected';
+  document.getElementById('config-options').style.display = 'none';
+  document.getElementById('image-upload').style.display = 'none';
+  document.getElementById('color-picker').value = '#ffffff'; // Reset kleurpicker naar wit
+  document.getElementById('texture-picker').value = 'none'; // Reset textuur naar geen
+
+
+
+  // Reset de geselecteerde en gehoverde delen
+  selectedPart = null;
+  hoveredPart = null;
+}
 // Animation loop
 function animate() {
   controls.update();
