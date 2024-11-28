@@ -7,23 +7,26 @@
     <title>3D Sneaker App</title>
   </head>
   <body>
-    <div id="info-panel">
-      <h3 id="selected-part-name">No part selected</h3>
-      <div id="config-options" style="display: none;">
-        <label for="color-picker">Color:</label>
-        <input type="color" id="color-picker">
-        <label for="texture-picker">Texture:</label>
-        <select id="texture-picker">
-          <option value="none">None</option>
-          <option value="leather">Leather</option>
-          <option value="rubber">Rubber</option>
-          <option value="denim">Denim</option>
-        </select>
-        <div id="image-upload" style="display: none;">
-          <label for="image-picker">Upload Image:</label>
-          <input type="file" id="image-picker" accept="image/*">
+      <div id="info-panel">
+        <h3 id="selected-part-name">No part selected</h3>
+        <div id="config-options" style="display: none;">
+          <label for="color-picker">Color:</label>
+          <input type="color" id="color-picker">
+          <label for="texture-picker">Texture:</label>
+          <select id="texture-picker">
+            <option value="none">None</option>
+            <option value="leather">Leather</option>
+            <option value="rubber">Rubber</option>
+            <option value="denim">Denim</option>
+          </select>
+          <div id="image-upload" style="display: none;">
+            <label for="image-picker">Upload Image:</label>
+            <input type="file" id="image-picker" accept="image/*">
+          </div>
         </div>
+        <button id="place-order">Place Order</button>
       </div>
+
     <script type="module" src="/main.js"></script>
   </body>
 </html>

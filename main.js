@@ -183,6 +183,11 @@ gltfLoader.load(
   }
 );
 
+const placeOrderButton = document.getElementById('place-order');
+placeOrderButton.addEventListener('click', () => {
+  alert('Your custom shoe has been successfully ordered!');
+});
+
 // Animation loop
 function animate() {
   controls.update();
